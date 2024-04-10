@@ -1,23 +1,29 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import { ConnectWalletButton } from './components/ConnectWalletButton';
+import NFTGallery from './components/NFTGallery';
+import NFTForm from './components/NFTForm';
 import './App.css';
 
 function App() {
+  const [shouldFetchCollection, setShouldFetchCollection] = useState(false);
+  const [isDeploymentStarted, setIsDeploymentStarted] = useState(false);
+  const handleDeploymentStarted = (started) => {
+    setShouldFetchCollection(started);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ConnectWalletButton />
+      <main className="content">
+        <section className="nft-form-section">
+          <NFTForm onDeploymentStarted={setIsDeploymentStarted} />
+        </section>
+        {isDeploymentStarted && (
+          <section className="nft-collection-section">
+            <NFTGallery />
+          </section>
+        )}
+      </main>
     </div>
   );
 }

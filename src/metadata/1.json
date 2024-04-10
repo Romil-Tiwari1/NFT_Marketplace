@@ -1,0 +1,23 @@
+{
+    "name": "Digital Artwork #2",
+    "description": "An exclusive piece of digital art created , part of the Digital Artwork NFT Collection.",
+    "image": "ipfs://bafybeibmsjb576oizabmgsvn7gr3slwgc642tv2bai3gdunjugfqxfbhq4/nft1.jpeg",
+    "attributes": [
+      {
+        "trait_type": "Artist",
+        "value": "Jujutsu Kaisen"
+      },
+      {
+        "trait_type": "Creation Date",
+        "value": "2024-02-07"
+      },
+      {
+        "trait_type": "Medium",
+        "value": "Digital"
+      },
+      {
+        "trait_type": "Edition",
+        "value": "1 of 100"
+      }
+    ]
+  }

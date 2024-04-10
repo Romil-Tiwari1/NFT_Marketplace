@@ -1,5 +1,8 @@
 .App {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .App-logo {
@@ -14,7 +17,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #ffffff;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -26,6 +29,39 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.content {
+  display: flex;
+  justify-content: center; /* Align items in the center */
+  align-items: stretch; /* This will ensure both children stretch to the same height */
+  flex-wrap: nowrap; /* Adjust as needed for responsiveness */
+  margin: 2rem;
+  gap: 2rem; /* Control the space between form and gallery */
+}
+
+.nft-form-section,
+.nft-collection-section {
+  display: flex;
+  flex: 1; /* Allows both sections to grow and take up equal space */
+  flex-direction: column; /* Aligns children of these sections in a column */
+  min-width: 300px; /* Minimum width before wrapping */
+  max-width: 600px; /* Maximum width to ensure they don’t grow too large */
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start; /* Aligns gallery items to the top */
+  margin-bottom: 1rem;
+}
+
+/* Additional styles for the header to ensure it's styled appropriately */
+.App-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 @keyframes App-logo-spin {

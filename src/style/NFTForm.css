@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+.nft-form-container {
+    max-width: 500px;
+    margin: 0; /* Remove margin to align properly in the flex container */
+    flex-grow: 1; /* Allows the form to grow and fill the flex container */
+    padding: 2rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: rgb(255, 255, 255);
+    font-family: 'Roboto', sans-serif;
+}
+
+.nft-form-heading {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 40px;
+}
+
+.nft-form label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 700;
+}
+
+.nft-form input[type="text"],
+.nft-form textarea,
+.nft-form input[type="file"] {
+    padding: 0.5rem;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.nft-form button {
+    padding: 0.5rem 2rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+    margin: auto; /* Centers the button */
+    display: block; /* Allows margin: auto to center the button */
+}
+
+.nft-form button:hover {
+    background-color: #0056b3;
+}
