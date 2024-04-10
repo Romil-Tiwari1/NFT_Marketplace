@@ -65,4 +65,4 @@ Your NFT collection can be viewed in the "My Collection" section, showcasing all
 Romil Tiwari | tiwari.rom@northeastern.edu
 Anuja Shinde | shinde.anuj@northeastern.edu
 
-## IPFS URL:
+## IPFS URL: https://ipfs.io/ipfs/QmZ1kwiwmVCrbUCh2ztN9vZX52UNwxfbKuQ4qjagyjeEzU
