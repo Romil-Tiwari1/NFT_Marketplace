@@ -19,12 +19,12 @@
 .App-header {
   background-color: #ffffff;
   min-height: 100vh;
-  display: flex;
+  display: inline;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: rgb(0, 0, 0);
 }
 
 .App-link {
@@ -33,35 +33,26 @@
 
 .content {
   display: flex;
-  justify-content: center; /* Align items in the center */
-  align-items: stretch; /* This will ensure both children stretch to the same height */
-  flex-wrap: nowrap; /* Adjust as needed for responsiveness */
-  margin: 2rem;
+  flex-direction: row; /* Arrange children (form and gallery) in a row */
+  justify-content: flex-start; /* Align children to the start of the container */
+  align-items: flex-start; /* Align children to the top of the container */
   gap: 2rem; /* Control the space between form and gallery */
+  padding: 2rem;
 }
 
-.nft-form-section,
+
+.nft-form-section {
+  width: fit-content;
+}
 .nft-collection-section {
-  display: flex;
-  flex: 1; /* Allows both sections to grow and take up equal space */
-  flex-direction: column; /* Aligns children of these sections in a column */
+  flex: 1; /* Allow both sections to grow and shrink as needed */
   min-width: 300px; /* Minimum width before wrapping */
-  max-width: 600px; /* Maximum width to ensure they don’t grow too large */
 }
 
 .gallery {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-start; /* Aligns gallery items to the top */
-  margin-bottom: 1rem;
-}
-
-/* Additional styles for the header to ensure it's styled appropriately */
-.App-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: inline-flex;
+  flex-wrap: wrap-reverse;
+  gap: 1rem; /* Spacing between NFT cards */
 }
 
 @keyframes App-logo-spin {
@@ -71,4 +62,13 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.card {
+  width: calc(33% - 1rem); /* Set width to 1/3rd of the container width minus gap */
+  margin-bottom: 1rem; /* Spacing below each card */
+  min-height: 450px; /* Adjust this value to suit your design */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Distributes space evenly */
 }

@@ -3,9 +3,8 @@ import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import '../style/Header.css';
 
 export const ConnectWalletButton = () => {
-  const { connect, connectors } = useConnect();
+  const { connect, connectors, isConnected } = useConnect();
   const { disconnect } = useDisconnect();
-  const { isConnected } = useAccount();
   const [hasConnectedOnce, setHasConnectedOnce] = useState(false);
 
   // When the component mounts, check if the wallet is already connected
@@ -18,11 +17,18 @@ export const ConnectWalletButton = () => {
       // Disconnect the wallet
       await disconnect();
     } else {
-      // Connect the wallet
-      await connect({ connector: connectors[0] });
-      setHasConnectedOnce(true); // Set the flag to true when wallet is connected
+      // Attempt to connect to the first available wallet connector
+      // It would be better to let the user choose, especially if there are multiple options
+      for (const connector of connectors) {
+        if (connector.ready) {
+          await connect({ connector });
+          break;
+        }
+      }
+      setHasConnectedOnce(true); // Set the flag to true when the wallet is connected
     }
   };
+
 
   // Apply the 'connected' class based on the hasConnectedOnce flag
   return (

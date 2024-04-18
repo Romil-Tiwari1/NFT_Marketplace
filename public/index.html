@@ -2,6 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    connect-src 'self' https://api.pinata.cloud https://*.infura.io https://ipfs.io;
+    img-src 'self' https://ipfs.io/ipfs/;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src 'self' https://fonts.gstatic.com;">
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />

@@ -1,133 +1,98 @@
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import axios from 'axios';
+import { useProvider } from 'wagmi';
 import MyNFTJson from './abis/MyNFT.json';
+import COLLECTION_ABI from './abis/CollectionNFT.json';
 
-function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-const useMyNftCollection = (shouldFetch) => {
+const useMyNftCollection = (collectionAddresses, refreshTrigger) => {
     const [nfts, setNfts] = useState([]);
-    // Your Infura RPC URL
-    const rpcURL = 'https://sepolia.infura.io/v3/cc0c53eb9b624ac595bc708575bbeed5';
-    const pollInterval = 15000;
-    const BACKEND_API_URL = process.env.REACT_APP_NGROK_URL;
-    console.log('NFT COLLECTION : NGROK URL',BACKEND_API_URL);
-
-    const fetchDeployedContractAddress = async () => {
-        try {
-            const response = await axios.get(`${BACKEND_API_URL}/getDeployedAddress`, {
-                headers: {
-                    'ngrok-skip-browser-warning': 'true',
-                    'Accept': 'application/json'
-                }
-            });
-            console.log(`Response Content-Type: ${response.headers['content-type']}`);
-            console.log(`Deployed contract address: ${response.data.address}`);
-            return response.data.address;
-        } catch (error) {
-            console.error('Error fetching deployed contract address:', error);
-            return null;
-        }
-    };
-
-    const fetchNFTs = async (contractAddress) => {
-        console.log(`Fetching NFTs for contract at address: ${contractAddress}`);
-        const provider = new ethers.providers.JsonRpcProvider(rpcURL);
-        const contract = new ethers.Contract(contractAddress, MyNFTJson.abi, provider);
-        const allNfts = [];
-
-        try {
-            const totalSupply = await contract.totalSupply();
-            console.log(`Total supply for contract ${contractAddress}: ${totalSupply}`);
-
-            for (let tokenId = 1; tokenId <= totalSupply; tokenId++) {
-                try {
-                    const tokenURI = await contract.tokenURI(tokenId);
-                    console.log(`Token URI for token ID ${tokenId}: ${tokenURI}`); 
-
-                    // Check if the tokenURI starts with 'ipfs://'
-                    let correctedTokenURI = tokenURI;
-                    const ipfsPattern = 'ipfs://';
-                    const splitURI = tokenURI.split(ipfsPattern);
-                    if (splitURI.length > 2) {
-                        correctedTokenURI = ipfsPattern + splitURI[splitURI.length - 1];
-                    }
-                    console.log(`Corrected Token URI for token ID ${tokenId}: ${correctedTokenURI}`);
-
-                    const metadataUrl = `${BACKEND_API_URL}/ipfs/${correctedTokenURI.split(ipfsPattern)[1]}`;
-                    console.log(`Metadata URL for token ID ${tokenId}: ${metadataUrl}`);
-
-                    const response = await axios.get(metadataUrl, {
-                        headers: {
-                            'ngrok-skip-browser-warning': 'true',
-                            'Accept': 'application/json'
-                        }
-                    });
-
-
-                    console.log(`Response from fetch for token ID ${tokenId}:`, response);
-                    const metadata = response.data;
-                    console.log(`Metadata for token ID ${tokenId}:`, metadata);
-                    const imageUrl = metadata.image.startsWith('ipfs://')
-                        ? `https://ipfs.io/ipfs/${metadata.image.split('ipfs://')[1]}`
-                        : metadata.image;
-                    console.log(`Image URL for token ID ${tokenId}: ${imageUrl}`);
-
-                    allNfts.push({
-                        contract: contractAddress,
-                        tokenId,
-                        image: imageUrl,
-                        name: metadata.name,
-                        description: metadata.description,
-                        attributes: metadata.attributes,
-                    });
-                } catch (error) {
-                    console.error(`Failed to fetch metadata for token ID ${tokenId}:`, error);
-                }
-            }
-        } catch (error) {
-            console.error(`Failed to fetch total supply for contract:`, error);
-        }
-
-        setNfts(allNfts);
-    };
-
-    const pollDeployedAddress = async () => {
-        return new Promise((resolve, reject) => {
-            const interval = setInterval(async () => {
-                try {
-                    const deployedAddress = await fetchDeployedContractAddress();
-                    if (deployedAddress) {
-                        clearInterval(interval);
-                        resolve(deployedAddress);
-                    }
-                } catch (error) {
-                    clearInterval(interval);
-                    reject(error);
-                }
-            }, pollInterval);
-        });
-    };
+    const provider = useProvider();
+    //const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS;;
 
     useEffect(() => {
-        const init = async () => {
-            if (shouldFetch) {
-                const deployedAddress = await pollDeployedAddress();
-                if (deployedAddress) {
-                    await delay(10000);
-                    await fetchNFTs(deployedAddress);
-                } else {
-                    console.log('Unable to find deployed contract address after polling.');
+        async function fetchNFTsFromCollection(address) {
+            console.log(`Fetching NFTs from collection at address: ${address}`);
+            const contract = new ethers.Contract(address, COLLECTION_ABI.abi, provider);
+            try {
+                const totalSupply = await contract.totalSupply();
+                console.log(`Total supply for ${address}: ${totalSupply.toNumber()}`);
+                const nftPromises = [];
+
+                for (let i = 1; i <= totalSupply.toNumber(); i++) {
+                    nftPromises.push(fetchNFTData(contract, i));
                 }
+
+                const nfts = await Promise.all(nftPromises);
+                console.log(`Fetched NFTs from ${address}:`, nfts);
+                return nfts.filter(nft => nft);  // Filter out undefined entries
+            } catch (error) {
+                console.error(`Error fetching NFTs from ${address}:`, error);
+                throw error;
             }
-        };
+        }
 
-        init();
-    }, [shouldFetch]);
+        async function fetchAllNfts() {
+            if (collectionAddresses.length > 0) {
+                console.log('Fetching NFTs from all addresses...');
+                const allNfts = await Promise.all(collectionAddresses.map(addr => fetchNFTsFromCollection(addr)));
+                setNfts(allNfts.flat());
+                console.log('All fetched NFTs:', allNfts.flat());
+            }
+        }
 
-    return nfts;
+        if (provider && collectionAddresses.length > 0) {
+            fetchAllNfts();
+        }
+
+    }, [provider, JSON.stringify(collectionAddresses), refreshTrigger]);  // Ensure this effect is only invoked when provider or contractAddress changes
+
+    return { nfts };
 };
+
+async function fetchWithRetry(url, attempts, delay) {
+    for (let i = 0; i < attempts; i++) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return await response.json();
+        } catch (e) {
+            console.log(`Attempt ${i + 1} failed: ${e.message}`);
+            if (i < attempts - 1) {
+                await new Promise(r => setTimeout(r, delay));
+                delay *= 2; // Exponential back-off
+            } else {
+                throw e; // Rethrow the error after the last attempt
+            }
+        }
+    }
+}
+
+async function fetchNFTData(contract, tokenId) {
+    const tokenURI = await contract.tokenURI(tokenId);
+    const correctedTokenURI = tokenURI.replace('ipfs://', 'https://ipfs.io/ipfs/');
+    
+    try {
+        // Use fetchWithRetry instead of the fetch directly.
+        const metadata = await fetchWithRetry(correctedTokenURI, 3, 5000); // 3 attempts with an initial delay of 1000ms
+        console.log(`Fetched metadata for token ${tokenId}:`, metadata);
+        
+        // Retrieve the symbol for the token
+        const symbol = await contract.tokenSymbol(tokenId);
+        console.log(`Adding symbol "${symbol}" to NFT with id=${tokenId}`);
+        
+        // Return the NFT data
+        return {
+            tokenId: tokenId.toString(),
+            name: metadata.name,
+            description: metadata.description,
+            image: metadata.image.replace('ipfs://', 'https://ipfs.io/ipfs/'),
+            attributes: metadata.attributes,
+            symbol: symbol,
+        };
+    } catch (error) {
+        console.error(`Failed to fetch metadata for token ${tokenId}:`, error);
+        throw error; // Propagate the error to be handled by the caller
+    }
+}
 
 export default useMyNftCollection;

@@ -1,6 +1,5 @@
 /* Apply similar styles to NFTGallery to match NFTForm */
 .gallery-container {
-  max-width: 500px;
   margin: auto; /* Center the gallery container */
   padding: 2rem;
   border: 1px solid #e0e0e0;
@@ -18,12 +17,12 @@
   text-align: center; /* Centers the heading text */
 }
 
-/* Update existing gallery styles */
 .gallery {
   display: flex;
-  flex-direction: column; /* Stack items vertically */
-  align-items: center; /* Align items horizontally in the center */
-  gap: 1rem; /* Spacing between items */
+  flex-wrap: wrap-reverse;
+  justify-content: center;
+  align-items: stretch;
+  gap: 10px; /* This provides space between the items */
 }
 
 .card {
@@ -31,18 +30,33 @@
   border-radius: 8px;
   overflow: hidden;
   width: 100%; /* Match width of form */
+  height: auto;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   margin-bottom: 1rem; /* Spacing between cards */
 }
 
 .card-image img {
-  width: 100%; /* Image takes full width of the card */
-  border-top-left-radius: 8px; /* Match card border radius */
-  border-top-right-radius: 8px;
+  width: 75%;
+  height: 250px; /* Fixed height for images */
+  object-fit: cover;
+  border-radius: 20px;
+  padding: 5px;
+}
+
+.card-image{
+  background-color: #fffefe;
+}
+
+.card-details-title {
+  text-align: center;
+  font-size: 30px;
+  font-family:fantasy;
 }
 
 .card-details {
-  padding: 16px;
-  background-color: #f9f9f9;
+  padding: 10px;
+  background-color: #8a8888;
   text-align: left;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 20px;
 }
